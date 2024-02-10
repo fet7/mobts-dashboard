@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                String   @id @default(cuid())
+  tinNumber         String   @unique
+  registrationNumber String  @unique
+  licenseNumber     String   @unique
+  companyName       String   @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model User {
+  id            String   @id @default(cuid())
+  firstName     String
+  lastName      String
+  email         String   @unique
+  password      String
+  createdAt        DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Bus {
+  id            String   @id @default(cuid())
+  plateNumber   String   @unique
+  seatCapacity  Int
+  status        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Route {
+  id              String   @id @default(cuid())
+  departureCity   String
+  arrivalCity     String
+  companyId     String
+  schedules       Schedule[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Schedule {
+  id              String   @id @default(cuid())
+  date            DateTime
+  busId           String
+  companyId     String
+  route           Route    @relation(fields: [routeId], references: [id])
+  routeId         String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum userRole {
+  USER
+  COMPANY_ADMIN
+  COMPANY_FINANCE
+  COMPANY_SALES
+  SYSTEM_ADMIN
+  SYSTEM_SUPPORT
+  SYSTEM_SALES
+}
